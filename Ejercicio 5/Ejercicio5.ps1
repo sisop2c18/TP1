@@ -34,21 +34,23 @@ Param(
 $filter = "*$FileType"
                           
 $fsw = New-Object IO.fileSystemWatcher $PathMonitoring, $filter  
- 
+
+New-Item -ItemType directory -Path .\ArchivoLog
+
 Register-ObjectEvent $fsw Created -SourceIdentifier FileCreated -Action { 
 $name = $Event.SourceEventArgs.Name 
 $timeStamp = $Event.TimeGenerated 
 Write-Host "El archivo '$name' fue creado a las $timeStamp" -fore green 
-Out-File -FilePath D:\Scripts\FileChange\outlog.txt -Append -InputObject "El archivo '$name' fue creado a las $timeStamp"} 
+Out-File -FilePath .\ArchivoLog\outlog.txt -Append -InputObject "El archivo '$name' fue creado a las $timeStamp"} 
  
 Register-ObjectEvent $fsw Deleted -SourceIdentifier FileDeleted -Action { 
 $name = $Event.SourceEventArgs.Name 
 $timeStamp = $Event.TimeGenerated 
 Write-Host "El archivo '$name' fue eliminado a las $timeStamp" -fore red 
-Out-File -FilePath D:\Scripts\FileChange\outlog.txt -Append -InputObject "El archivo '$name' fue eliminado a las $timeStamp"} 
+Out-File -FilePath .\ArchivoLog\outlog.txt -Append -InputObject "El archivo '$name' fue eliminado a las $timeStamp"} 
  
 Register-ObjectEvent $fsw Changed -SourceIdentifier FileChanged -Action { 
 $name = $Event.SourceEventArgs.Name 
 $timeStamp = $Event.TimeGenerated 
 Write-Host "El archivo '$name' fue modificado a las $timeStamp" -fore white 
-Out-File -FilePath D:\Scripts\FileChange\outlog.txt -Append -InputObject "El archivo '$name' fue modificado a las $timeStamp"} 
+Out-File -FilePath .\ArchivoLog\outlog.txt -Append -InputObject "El archivo '$name' fue modificado a las $timeStamp"} 
