@@ -27,8 +27,13 @@ Instancia de Entrega: Primera Entrega
 
 Param(
         [string][Parameter(Mandatory=$True)]$PathMonitoring,
-        [String][ValidatePattern("[.]")][ValidateLength(1,8)][Parameter(Mandatory=$True)]$FileType
+        [String][Parameter(Mandatory=$True)]$FileType
 )
+
+If ($FileType="*")
+{
+$FileType=".*"
+}
 
 
 $filter = "*$FileType"
