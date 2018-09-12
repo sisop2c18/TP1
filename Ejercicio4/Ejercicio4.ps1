@@ -55,6 +55,7 @@ foreach($pasaje in $pasajes) {
     if(($pasaje.asientosLibres -gt 0) -and (($pasaje.desde -eq $ciudadOrigen) -or ($pasaje.desde -Like $ciudadOrigen+"*")) -and (($pasaje.hasta -eq $ciudadDestino) -or ($pasaje.hasta -Like $ciudadDestino+"*"))) {
         Write-Host "$i)  Origen:" $pasaje.desde
         Write-Host "    Destino:" $pasaje.hasta
+        Write-Host "    Numero de pasaje: " $i
         Write-Host "    Fecha y hora salida:" $pasaje.fechaHoraDesde
         Write-Host "    Fecha y hora llegada:" $pasaje.fechaHoraHasta
         if($cambio) {
@@ -73,17 +74,17 @@ if($hayPasajes -eq $false) {
     Write-Host "No se encontraron pasajes que cumplan con esos criterios de busqueda"
     Write-Host " "
 } else {
-    $nroPasaje = Read-Host  "Ingrese el numero de pasaje que desea"
+   ## $nroPasaje = Read-Host  "Ingrese el numero de pasaje que desea"
    
    ## Valido que el numero de pasaje ingresado sea un numero
    do {
     try {
             $numOk = $true
-            [int]$nroPasaje = Read-host "Ingrese el numero de pasaje que dese"
+            [int]$nroPasaje = Read-host "Ingrese el numero de pasaje que desea"
                 ## Valido que el numero de pasaje ingresado por pantalla pertenezca a la lista de pasajes
-            while($pasajes[$nroPasaje - 1] -eq $Null -or $nroPasaje -eq "") {
+            while($Null -eq $pasajes[$nroPasaje - 1] -or $nroPasaje -eq "" -or ((($pasajes[$nroPasaje - 1].desde -ne $ciudadOrigen) -or -Not($pasajes[$nroPasaje - 1].desde -Like $ciudadOrigen+"*")) -and (($pasajes[$nroPasaje - 1].hasta -ne $ciudadDestino) -or -Not($pasajes[$nroPasaje - 1].hasta -Like $ciudadDestino+"*"))) -or $pasajes[$nroPasaje - 1].asientosLibres -eq 0 ) {
                 Write-Host " "
-                Write-Host "Ingreso un numero de pasaje que no existe, Verifique los datos ingresados"
+                Write-Host "Ingreso un numero de pasaje que no existe, verifique los datos ingresados"
                 Write-Host " "
                 $nroPasaje = Read-Host -Prompt "Ingrese el numero de pasaje que desea"
             }
@@ -92,13 +93,10 @@ if($hayPasajes -eq $false) {
     }    ## mientras no sea numero saldra por el catch y volvera a pedir el reingreso de un pasaje
     until ($numOK)
 
-    $cantAsientos = Read-Host -Prompt "Ingrese la cantidad de asientos que necesita"
-
-
     do {
      try {
             $numOk = $true
-            [int]$cantAsientos = Read-host "Cantidad de asientos que necesita"
+            [int]$cantAsientos = Read-host "Ingrese la cantidad de asientos que necesita"
                 
             while($pasajes[$nroPasaje - 1].asientosLibres -lt $cantAsientos) {
                 Write-Host " "
