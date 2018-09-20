@@ -1,25 +1,23 @@
-ï»¿<#
+<#
 .SYNOPSIS
     Sistema de monitoreo de archivos.
 .DESCRIPTION
-    Se ingresa por parÃ¡metro el Path que sera monitoreado y el tipo de archivo que se desea monitorear.
-    Luego se listarÃ¡n en la consola y un archivo de logs si se realiza una alta, modificacion o un borrado de los archivos.
+    Se ingresa por parámetro el Path que sera monitoreado y el tipo de archivo que se desea monitorear.
+    Luego se listarán en la consola y un archivo de logs si se realiza una alta, modificacion o un borrado de los archivos.
     Si se ingresase .*, monitoreara todos los archivos sin discriminar el tipo.
     
 .PARAMETER PathMonitoring
     Ubicacion de los archivos a monitorear. [OBLIGATORIO].
 .PARAMETER FileType
     Tipo de archivo a monitorear. [OBLIGATORIO]. 
-
-
 .NOTES
 Nombre del Script: Ejercicio5.ps1
-Trabajo PrÃ¡ctico Nro. 1 - Ejercicio 5
+Trabajo Práctico Nro. 1 - Ejercicio 5
 Integrantes:
             Miller, Lucas            39353278
             Ramos, Micaela           39266928
             Schafer, Federico        39336856
-            Sapaya, NicolÃ¡s MartÃ­n   38319489
+            Sapaya, Nicolás Martín   38319489
             Secchi, Lucas            39267345
 Instancia de Entrega: Primera Entrega
 #>
@@ -29,12 +27,6 @@ Param(
         [string][Parameter(Mandatory=$True)]$PathMonitoring,
         [String][Parameter(Mandatory=$True)]$FileType
 )
-
-If ($FileType="*")
-{
-$FileType=".*"
-}
-
 
 $filter = "*$FileType"
                           
