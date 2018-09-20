@@ -225,7 +225,8 @@ function mostrarPalabra{
           [Parameter(Mandatory = $true)][validateNotNullorEmpty()]$arrayWords,
           [Parameter(Mandatory = $true)][int]$cantPalabras,
           [Parameter(Mandatory = $false)][string]$nombre,
-          [Parameter(Mandatory = $false)][string]$pathPuntajes
+          [Parameter(Mandatory = $false)][string]$pathPuntajes,
+          [Parameter(Mandatory = $false)][bool]$new
     )
 
     $hash = @{}
@@ -265,11 +266,20 @@ function mostrarPalabra{
     Write-Host ""
 
     if($pathPuntajes -ne ''){
-        saveTable -pathPuntajes $puntajesFullPath -tiempo $tiempoProm -nombre $nombre
+        if($new){
+            Write-Host "Mejores Tiempos:"
+            Write-Host "$nombre $tiempoProm"
+            Set-Content -Path $puntajesFullPath -Value "$nombre $tiempoProm"
+        }else{
+            saveTable -pathPuntajes $puntajesFullPath -tiempo $tiempoProm -nombre $nombre
+        }
+        
     }   
 }
 
 ############################################################################################################################################################
+
+$notCreated = $false
 
 #Guarda la direccion absoluta del documento
 $palabrasFullPath = (Get-ChildItem $pathPalabras).fullName
@@ -282,8 +292,9 @@ if (-not (Test-Path $pathPalabras)){
 
 if($pathPuntajes -ne ""){
     if (-not (Test-Path $pathPuntajes)){
-        Write-Error 'El path de puntajes es erroneo. cantPalabras, [pathPalabras], [pathPuntajes], orden, siendo este último: aleatoria, ascendente o descendente'
-        return;
+        $notCreated = $true
+        $puntajesFullPath = $pathPuntajes
+        $nombrePlayer = Read-Host -Prompt "Ingrese Nombre del Jugador"
     }else{
         $puntajesFullPath = (Get-ChildItem $pathPuntajes).fullName 
         $nombrePlayer = Read-Host -Prompt "Ingrese Nombre del Jugador"
@@ -311,7 +322,13 @@ switch ($PSCmdlet.ParameterSetName){
 }
 
 if ($pathPuntajes -ne ""){
-    mostrarPalabra -arrayWords $orderWords -cantPalabras $cantPalabras -nombre $nombrePlayer -pathPuntajes $puntajesFullPath
+    if($notCreated){
+        Write-Host "AHAHAH NO EXIST"
+        mostrarPalabra -arrayWords $orderWords -cantPalabras $cantPalabras -nombre $nombrePlayer -pathPuntajes $puntajesFullPath -new $notCreated
+    }else{
+        mostrarPalabra -arrayWords $orderWords -cantPalabras $cantPalabras -nombre $nombrePlayer -pathPuntajes $puntajesFullPath
+    }
+    
 }else{
     mostrarPalabra -arrayWords $orderWords -cantPalabras $cantPalabras
 }
