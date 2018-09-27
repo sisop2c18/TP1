@@ -10,7 +10,7 @@
     Muestra el porcentaje de ocurrencia de cada carácter en un archivo cuya ruta será pasada por parámetro.
 
 .EXAMPLE
-    .\Ejercicio2.ps1 -pathArch Test.zip
+    .\Ejercicio2.ps1 -pathArch Palabras.txt
 #>
 
 Param
@@ -20,6 +20,9 @@ Param
 
 if( $(test-path $pathArch) -eq $false){
     Write-Error "Ruta de palabras inexistente"
+}
+If ( $(Get-Content $pathArch) -eq $Null) {
+    Write-Error "ARCHIVO DE ENTRADA VACIO"
 }
 else{
     $lineas = $(Get-Content $pathArch).count
