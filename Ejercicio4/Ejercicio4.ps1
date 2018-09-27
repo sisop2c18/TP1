@@ -52,11 +52,34 @@ $csv | foreach-object {
 $i = 1
 $hayPasajes = $false
 $date = Get-Date
+$pasajesValidos = @()
 
 foreach($pasaje in $pasajes) {
     $datePasaje = Get-Date ($pasaje.fechaHoraDesde)
     if(($pasaje.asientosLibres -gt 0) -and ($datePasaje  -gt $date) -and (($pasaje.desde -eq $ciudadOrigen) -or ($pasaje.desde -Like $ciudadOrigen+"*")) -and (($pasaje.hasta -eq $ciudadDestino) -or ($pasaje.hasta -Like $ciudadDestino+"*"))) {
-        Write-Host "$i)  Origen:" $pasaje.desde
+        $hayPasajes = $true
+        $pasajeVal = [PSCustomObject]@{
+            desde = $pasaje.desde
+            fechaHoraDesde = $pasaje.fechaHoraDesde
+            hasta = $pasaje.hasta
+            fechaHoraHasta= $pasaje.fechaHoraHasta
+            precio = $pasaje.precio
+            asientosLibres = $pasaje.asientosLibres
+            indice = $i 
+        }
+       $pasajesValidos += $pasajeVal;
+    }
+    $i++
+}
+if($hayPasajes -eq $false) {
+    Write-Host "No se encontraron pasajes que cumplan con esos criterios de busqueda"
+    Write-Host " "
+} else {
+    $i = 1 
+    Write-Host " "
+    foreach( $pasaje in $pasajesValidos) {
+        Write-Host "$i)  Numero de pasaje:" $i
+        Write-Host "    Origen:" $pasaje.desde
         Write-Host "    Destino:" $pasaje.hasta
         Write-Host "    Fecha y hora salida:" $pasaje.fechaHoraDesde
         Write-Host "    Fecha y hora llegada:" $pasaje.fechaHoraHasta
@@ -67,61 +90,56 @@ foreach($pasaje in $pasajes) {
         }
         Write-Host "    Asientos libres:" $pasaje.asientosLibres
         Write-Host " "
-        $hayPasajes = $true
+        $i++
     }
 
-    $i++
-}
-
-if($hayPasajes -eq $false) {
-    Write-Host "No se encontraron pasajes que cumplan con esos criterios de busqueda"
-    Write-Host " "
-} else {
-    $nroPasaje = Read-Host  "Ingrese el numero de pasaje que desea"
-   
-   ## Valido que el numero de pasaje ingresado sea un numero
+     ## Valido que el numero de pasaje ingresado sea un numero
    do {
     try {
             $numOk = $true
-            [int]$nroPasaje = Read-host "Ingrese el numero de pasaje que dese"
+            [int]$nroPasaje = Read-host "Ingrese el numero de pasaje que desee"
                 ## Valido que el numero de pasaje ingresado por pantalla pertenezca a la lista de pasajes
-            while($pasajes[$nroPasaje - 1] -eq $Null -or $nroPasaje -eq "") {
+            while($pasajesValidos[$nroPasaje - 1] -eq $Null -or $nroPasaje -eq "") {
                 Write-Host " "
-                Write-Host "Ingreso un numero de pasaje que no existe, Verifique los datos ingresados"
+                Write-Host "Ingreso un numero de pasaje que no existe, verifique los datos ingresados"
                 Write-Host " "
-                $nroPasaje = Read-Host -Prompt "Ingrese el numero de pasaje que desea"
+                $nroPasaje = Read-Host -Prompt "Ingrese el numero de pasaje nuevamente"
             }
         } 
-    catch {$numOK = $false}
+        catch {
+            $numOK = $false
+            Write-Host " "
+            Write-Host "Numero de pasaje invalido"
+            Write-Host " "
+        }
     }    ## mientras no sea numero saldra por el catch y volvera a pedir el reingreso de un pasaje
     until ($numOK)
-
-    $cantAsientos = Read-Host -Prompt "Ingrese la cantidad de asientos que necesita"
-
 
     do {
-     try {
-            $numOk = $true
-            [int]$cantAsientos = Read-host "Cantidad de asientos que necesita"
-                
-            while($pasajes[$nroPasaje - 1].asientosLibres -lt $cantAsientos) {
-                Write-Host " "
-                Write-Host "La cantidad de asientos ingresada es mayor a los asientos disponibles."
-                Write-Host "Por favor ingrese los datos nuevamente."
-                Write-Host " "
-
-                $cantAsientos = Read-Host -Prompt "Cantidad de asientos que necesita"
-            }
-        } 
-     catch {$numOK = $false}
-    }    ## mientras no sea numero saldra por el catch y volvera a pedir el reingreso de un pasaje
-    until ($numOK)
-
-
-    $pasajes[$nroPasaje - 1].asientosLibres -= $cantAsientos
-
-    Write-Host " "
-    Write-Host "Gracias por su compra."
+        try {
+               $numOk = $true
+               Write-Host " "
+               [int]$cantAsientos = Read-host "Cantidad de asientos que necesita"
+               while($pasajesValidos[$nroPasaje - 1].asientosLibres -lt $cantAsientos) {
+                   Write-Host " "
+                   Write-Host "La cantidad de asientos ingresada es mayor a los asientos disponibles."
+                   Write-Host " "
+   
+                   $cantAsientos = Read-Host -Prompt "Por favor, ingrese la cantidad nuevamente"
+               }
+           } 
+        catch {
+            $numOK = $false
+            Write-Host " "
+            Write-Host "Cantidad invalida"
+        }
+       }    ## mientras no sea numero saldra por el catch y volvera a pedir el reingreso de un pasaje
+       until ($numOK)
+       
+       $indice = $pasajesValidos[$nroPasaje - 1].indice - 1
+       $pasajes[$indice].asientosLibres -= $cantAsientos
+       Write-Host " "
+       Write-Host "Gracias por su compra."
 
     $pasajes | Export-Csv .\bd.csv -Delimiter ";" -NoTypeInformation
 }
