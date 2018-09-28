@@ -120,13 +120,13 @@ if($hayPasajes -eq $false) {
                $numOk = $true
                Write-Host " "
                [int]$cantAsientos = Read-host "Cantidad de asientos que necesita"
-               while($pasajesValidos[$nroPasaje - 1].asientosLibres -lt $cantAsientos) {
-                   Write-Host " "
-                   Write-Host "La cantidad de asientos ingresada es mayor a los asientos disponibles."
-                   Write-Host " "
-   
-                   $cantAsientos = Read-Host -Prompt "Por favor, ingrese la cantidad nuevamente"
-               }
+               while($pasajesValidos[$nroPasaje - 1].asientosLibres -lt $cantAsientos -or $cantAsientos -eq 0) {
+                Write-Host " "
+                Write-Host "La cantidad de asientos ingresada es mayor a los asientos disponibles o es 0."
+                Write-Host " "
+
+                $cantAsientos = Read-Host -Prompt "Por favor, ingrese la cantidad nuevamente"
+            }
            } 
         catch {
             $numOK = $false
