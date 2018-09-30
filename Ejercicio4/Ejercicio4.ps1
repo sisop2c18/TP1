@@ -23,7 +23,7 @@ Integrantes:
             Schafer, Federico        39336856
             Sapaya, Nicolás Martín   38319489
             Secchi, Lucas            39267345
-Instancia de Entrega: Primera Entrega
+Instancia de Entrega: Primera Re Entrega
 #>
 
 Param (
@@ -120,8 +120,8 @@ if($hayPasajes -eq $false) {
                $numOk = $true
                Write-Host " "
                [int]$cantAsientos = Read-host "Cantidad de asientos que necesita"
-               while($pasajesValidos[$nroPasaje - 1].asientosLibres -lt $cantAsientos -or $cantAsientos -eq 0) {
-                Write-Host " "
+               while(([int]($pasajesValidos[$nroPasaje - 1].asientosLibres) -lt $cantAsientos) -or ($cantAsientos -eq 0)) {
+				Write-Host " "
                 Write-Host "La cantidad de asientos ingresada es mayor a los asientos disponibles o es 0."
                 Write-Host " "
 
