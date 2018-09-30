@@ -33,9 +33,21 @@ Param(
 $filter = "*$FileType"
 
 #Obtengo el full path del path a monitorear.
+<#
 $fullPath = (Get-ChildItem $PathMonitoring).fullName
 $index = $($fullPath[0]).LastIndexOf('\')
 $ubicacion = $($fullPath[0]).Substring(0,$index)
+#>
+
+$ubicacion = "$pwd\$PathMonitoring"
+if (-not (Test-Path $ubicacion -PathType Container)){
+	if (-not (Test-Path $PathMonitoring -PathType Container)){
+		Write-Error 'EL PATH NO EXISTE'
+		return;
+	}
+	$ubicacion = $PathMonitoring
+}
+
                           
 $fsw = New-Object IO.fileSystemWatcher $ubicacion, $filter  
 
